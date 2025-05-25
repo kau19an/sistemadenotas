@@ -1,7 +1,8 @@
-#include <stdio.h>
+#include <ctype.h>  // Para 'toupper()'
+#include <locale.h> // Para 'setlocale()'
+#include <stdio.h>  // Para a entrada e saída e dados
 #include <stdlib.h> // Para 'exit()'
 #include <string.h> // Para 'strcpy()'
-#include <locale.h> // Para 'setlocale()'
 
 struct Aluno {
 	char nome[50];
@@ -32,9 +33,36 @@ int abrirMenu() {
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
     aluno[*total];
+    int valido = 1;
     
-    printf("\n> Digite o nome completo do aluno (sem espaços): ");
-    scanf("%s", aluno[*total].nome);
+    do {
+        printf("\n> Digite o nome completo do aluno (sem espaços): ");
+        scanf("%s", aluno[*total].nome);
+        
+        // Passa por cada letra do nome e verifica se são caracteres A-Z/a-z
+        for (int i = 0; aluno[*total].nome[i] != '\0'; i++) {
+            char c = aluno[*total].nome[i];
+            // Se forem, continua
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                valido = 1;
+                continue;
+            } else {
+                // Se possuir algum outro caractere além de A-Z/a-z, é considerado inválido (0)
+                valido = 0;
+                break;
+            }
+        }
+
+        if (!valido) {
+            printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n");
+        } else { // Se não possuir, prossegue
+            // Joga o nome para maiúsculo (letra por letra)
+            for (int i = 0; aluno[*total].nome[i] != '\0'; i++) {
+                aluno[*total].nome[i] = toupper(aluno[*total].nome[i]);
+            }
+        }
+    } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
+
     printf("> Digite o RGM: ");
     scanf("%d", &aluno[*total].RGM);
     printf("\nVocê cadastrou:");
@@ -44,7 +72,7 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
 
 // Opção 2 do menu
 void listarAlunos(struct Aluno aluno[], int total) {    
-    // Caso o usuário deseja ver a lista mas não há nenhum cadastrado
+    // Caso o usuário deseja ver a lista mas não há nenhum aluno cadastrado
     if (total == 0) {
         printf("\n(!) Nenhum aluno foi cadastrado até o momento.\n\n");
         return; // Para não continuar com as linhas abaixo
@@ -65,9 +93,36 @@ void atualizarAluno(struct Aluno aluno[], int total) {
     scanf("%d", &indice);
 
     if (indice >= 0 && indice < total) {
-        printf("\n  Digite o novo nome completo (sem espaços): ");
-        scanf("%9s", aluno[indice].nome);
-        
+        int valido = 1;
+        do {
+            printf("  Digite o novo nome completo (sem espaços): ");
+            scanf("%s", aluno[indice].nome);
+
+            // Passa por cada letra do nome e verifica se são caracteres A-Z/a-z
+            for (int i = 0; aluno[indice].nome[i] != '\0'; i++) {
+                char c = aluno[indice].nome[i];
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                    // Se forem, continua
+                    valido = 1;
+                    continue;
+                } else {
+                    // Se possuir algum outro caractere além de A-Z/a-z, é considerado inválido (0)
+                    valido = 0;
+                    break;
+                }
+            }
+
+            if (!valido) {
+                printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n\n");
+            } else { // Se não possuir, prossegue
+                // Joga o nome para maiúsculo (letra por letra)
+                for (int i = 0; aluno[indice].nome[i] != '\0'; i++) {
+                    aluno[indice].nome[i] = toupper(aluno[indice].nome[i]);
+                }
+            }
+
+        } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
+
         printf("  Digite o novo RGM: ");
         scanf("%d", &aluno[indice].RGM);
 
@@ -164,8 +219,8 @@ void atribuirNotas(struct Aluno aluno[], int total) {
 // Opção 6 do menu
 void atualizarNotas(struct Aluno aluno[], int total) {
     int indice;
-    
-    printf("\n> Digite o índice do aluno que terá as notas atualizadas: ");
+
+    printf("\n> Digite o índice do aluno que terá suas notas atualizadas: ");
     scanf("%d", &indice);
 
     // TODO
