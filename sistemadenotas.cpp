@@ -32,6 +32,7 @@ int abrirMenu() {
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
     aluno[*total];
+    int indice;
     int valido = 1;
     
     do {
@@ -62,8 +63,16 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
         }
     } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
 
-    printf("> Digite o RGM: ");
-    scanf("%d", &aluno[*total].RGM);
+    do {
+        printf("> Digite o RGM (até 8 dígitos): ");
+        scanf("%d", &aluno[indice].RGM);
+
+        // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
+        if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
+            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+        }
+    } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
+    
     printf("\nVocê cadastrou:");
     printf("\n- %s (RGM: %d)\n\n", aluno[*total].nome, aluno[*total].RGM);
     (*total)++;
@@ -94,7 +103,7 @@ void atualizarAluno(struct Aluno aluno[], int total) {
     if (indice >= 0 && indice < total) {
         int valido = 1;
         do {
-            printf("  Digite o novo nome completo (sem espaços): ");
+            printf("\n> Digite o novo nome completo (sem espaços): ");
             scanf("%s", aluno[indice].nome);
 
             // Passa por cada letra do nome e verifica se são caracteres A-Z/a-z
@@ -122,8 +131,15 @@ void atualizarAluno(struct Aluno aluno[], int total) {
 
         } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
 
-        printf("  Digite o novo RGM: ");
+    do {
+        printf("> Digite o novo RGM (até 8 dígitos): ");
         scanf("%d", &aluno[indice].RGM);
+
+        // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
+        if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
+            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+        }
+    } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
 
         printf("  (*) Aluno atualizado com sucesso!\n\n");
     } else {
