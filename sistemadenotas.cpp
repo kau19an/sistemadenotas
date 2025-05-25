@@ -104,7 +104,7 @@ void listarAlunos(struct Aluno aluno[], int total) {
         printf("(%d) Aluno: %s (RGM: %d)\n", i, aluno[i].nome, aluno[i].RGM);
         
         // Caso o aluno não possua notas atribuídas ainda
-        if (strlen(aluno[i].situacao) <= 1) {
+        if (strlen(aluno[i].situacao) == 0) {
             printf("    Situação: Atribua notas para que a média seja exibida.\n");
         } else { // Exibe a situação e a média caso já possua
             printf("    Situação: %s com média %.2f.\n", aluno[i].situacao, aluno[i].media);
@@ -277,7 +277,7 @@ void atribuirNotas(struct Aluno aluno[], int total) {
 }
 
 // Opção 6 do menu
-void atualizarNotas(struct Aluno aluno[], int total) {
+void corrigirNotas(struct Aluno aluno[], int total) {
     int indice;
     float soma, novaSoma;
     char situacaoAnterior[10];
@@ -286,6 +286,12 @@ void atualizarNotas(struct Aluno aluno[], int total) {
     scanf("%d", &indice);
 
     if (indice >= 0 && indice < total) {
+        // Evita com que o usuário corrija notas que nem sequer foram atribuídas ainda ao aluno
+        if (aluno[indice].media == 0 && strlen(aluno[indice].situacao) == 0) {
+            printf("  (!) Este aluno ainda não possui notas. Em vez disso, atribua-as na opção 5.\n");
+            return; // Para não continuar com as linhas abaixo
+        }
+
         // Copia a situação atual do aluno numa nova variável para futura comparação
         strcpy(situacaoAnterior, aluno[indice].situacao);
 
@@ -401,7 +407,7 @@ int main() {
                 limparTela();
                 break;
             case 6:
-                atualizarNotas(aluno, totalAlunos);
+                corrigirNotas(aluno, totalAlunos);
                 limparTela();
                 break;
             case 0:
