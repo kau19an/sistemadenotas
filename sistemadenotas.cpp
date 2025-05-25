@@ -164,12 +164,22 @@ void atribuirNotas(struct Aluno aluno[], int total) {
         do {
             printf("\n> Digite a nota da A1 (0-5): ");
             scanf("%f", &aluno[indice].a1);
+
+            // Caso o usuário coloque um número não aceito
+            if (aluno[indice].a1 < 0 || aluno[indice].a1 > 5) {
+                printf("  (!) Nota inválida. Ela deve estar entre 0 e 5.\n");
+            }
         } while (aluno[indice].a1 < 0 || aluno[indice].a1 > 5);
 
         // Lê a nota da A2 (aceitando apenas entre 0 a 5)
         do {
             printf("> Digite a nota da A2 (0-5): ");
             scanf("%f", &aluno[indice].a2);
+
+            // Caso o usuário coloque um número não aceito
+            if (aluno[indice].a2 < 0 || aluno[indice].a2 > 5) {
+                printf("  (!) Nota inválida. Digite um valor entre 0 e 5.\n\n");
+            }
         } while (aluno[indice].a2 < 0 || aluno[indice].a2 > 5);
 
         // Calcula a média
@@ -187,6 +197,11 @@ void atribuirNotas(struct Aluno aluno[], int total) {
             do {
                 printf("    > Digite a nota da AF (0-5): ");
                 scanf("%f", &aluno[indice].af);
+
+                // Caso o usuário coloque um número não aceito
+                if (aluno[indice].af < 0 || aluno[indice].af > 5) {
+                    printf("      (!) Nota inválida. Digite um valor entre 0 e 5.\n\n");
+                }
             } while (aluno[indice].af < 0 || aluno[indice].af > 5);
 
             // Verifica se a AF pode ajudar na nota da A1 e A2 e só as substituem se ela for maior
@@ -237,12 +252,22 @@ void atualizarNotas(struct Aluno aluno[], int total) {
         do {
             printf("  > Digite a nova nota da A1 (0-5): ");
             scanf("%f", &aluno[indice].a1);
+
+            // Caso o usuário coloque um número não aceito
+            if (aluno[indice].a1 < 0 || aluno[indice].a1 > 5) {
+                printf("    (!) Nota inválida. Digite um valor entre 0 e 5.\n\n");
+            }
         } while (aluno[indice].a1 < 0 || aluno[indice].a1 > 5);
 
         // Lê novamente a nota da A2 (aceitando apenas entre 0 a 5)
         do {
             printf("  > Digite a nova nota da A2 (0-5): ");
             scanf("%f", &aluno[indice].a2);
+
+            // Caso o usuário coloque um número não aceito
+            if (aluno[indice].a2 < 0 || aluno[indice].a2 > 5) {
+                printf("    (!) Nota inválida. Digite um valor entre 0 e 5.\n\n");
+            }
         } while (aluno[indice].a2 < 0 || aluno[indice].a2 > 5);
 
         // Calcula novamente a média
@@ -259,6 +284,11 @@ void atualizarNotas(struct Aluno aluno[], int total) {
             do {
                 printf("    > Digite a nova nota da AF (0-5): ");
                 scanf("%f", &aluno[indice].af);
+
+                // Caso o usuário coloque um número não aceito
+                if (aluno[indice].af < 0 || aluno[indice].af > 5) {
+                    printf("      (!) Nota inválida. Digite um valor entre 0 e 5.\n\n");
+                }
             } while (aluno[indice].af < 0 || aluno[indice].af > 5);
 
             // Verifica se a AF pode ajudar na nota da A1 e A2 e só as substituem se ela for maior
@@ -289,7 +319,7 @@ void atualizarNotas(struct Aluno aluno[], int total) {
         if (strcmp(situacaoAnterior, aluno[indice].situacao) != 0) {
             printf("\n(*) %s obteve a média %.2f e sua situação foi alterada para \"%s\".\n\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         } else {
-            printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n\n", aluno[indice].nome, soma, aluno[indice].situacao);
+            printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         }
     } else {
         printf("  (!) Índice inválido ou não existente.\n\n");
