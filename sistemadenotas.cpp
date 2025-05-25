@@ -2,7 +2,7 @@
 #include <locale.h> // Para 'setlocale()'
 #include <stdio.h>  // Para a entrada e saída e dados
 #include <stdlib.h> // Para 'exit()'
-#include <string.h> // Para 'strcpy()' e 'strcmp()'
+#include <string.h> // Para 'strcpy()', 'strcmp()' e 'strlen()'
 
 struct Aluno {
 	char nome[50];
@@ -81,7 +81,11 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
             printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
         }
     } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
-    
+
+    // Garante que a média e a situação do aluno iniciem zeradas
+    aluno[*total].media = 0;
+    strcpy(aluno[*total].situacao, "");
+
     printf("\nVocê cadastrou:");
     printf("\n- %s (RGM: %d)\n", aluno[*total].nome, aluno[*total].RGM);
     (*total)++;
@@ -191,6 +195,12 @@ void atribuirNotas(struct Aluno aluno[], int total) {
     scanf("%d", &indice);
 
     if (indice >= 0 && indice < total) {
+        // Evita com que o usuário possa sobrescrever notas já atribuídas a um aluno
+        if (aluno[indice].media > 0 || strlen(aluno[indice].situacao) > 0) {
+            printf("  (!) Este aluno já possui notas atribuídas. Em vez disso, corrija-as na opção 6.\n");
+            return; // Para não continuar com as linhas abaixo
+        }
+
         // Lê a nota da A1 (aceitando apenas entre 0 a 5)
         do {
             printf("\n> Digite a nota da A1 (0-5): ");
