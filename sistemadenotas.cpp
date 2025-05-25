@@ -2,7 +2,7 @@
 #include <locale.h> // Para 'setlocale()'
 #include <stdio.h>  // Para a entrada e saída e dados
 #include <stdlib.h> // Para 'exit()'
-#include <string.h> // Para 'strcpy()'
+#include <string.h> // Para 'strcpy()' e 'strcmp()'
 
 struct Aluno {
 	char nome[50];
@@ -22,7 +22,6 @@ int abrirMenu() {
     printf("(4) Deletar aluno\n");   // D
     printf("(5) Atribuir notas\n");
     printf("(6) Corrigir notas\n");
-    printf("(7) Deletar notas\n");
     printf("(0) Sair\n\n");
     printf("> Escolha uma opção: ");
     scanf("%d", &escolha);
@@ -161,15 +160,15 @@ void atribuirNotas(struct Aluno aluno[], int total) {
     scanf("%d", &indice);
 
     if (indice >= 0 && indice < total) {
-        // Lê a nota da A1
+        // Lê a nota da A1 (aceitando apenas entre 0 a 5)
         do {
-            printf("  Digite a nota da A1 (0-5): ");
+            printf("\n> Digite a nota da A1 (0-5): ");
             scanf("%f", &aluno[indice].a1);
         } while (aluno[indice].a1 < 0 || aluno[indice].a1 > 5);
 
-        // Lê a nota da A2
+        // Lê a nota da A2 (aceitando apenas entre 0 a 5)
         do {
-            printf("  Digite a nota da A2 (0-5): ");
+            printf("> Digite a nota da A2 (0-5): ");
             scanf("%f", &aluno[indice].a2);
         } while (aluno[indice].a2 < 0 || aluno[indice].a2 > 5);
 
@@ -184,9 +183,9 @@ void atribuirNotas(struct Aluno aluno[], int total) {
         } else { // Senão, pede a AF
             printf("\n(*) %s foi reprovado com média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
 
-            // Lê a nota da AF
+            // Lê a nota da AF (aceitando apenas entre 0 a 5)
             do {
-                printf("> Digite a nota da AF (0-5): ");
+                printf("    > Digite a nota da AF (0-5): ");
                 scanf("%f", &aluno[indice].af);
             } while (aluno[indice].af < 0 || aluno[indice].af > 5);
 
@@ -219,21 +218,73 @@ void atribuirNotas(struct Aluno aluno[], int total) {
 // Opção 6 do menu
 void atualizarNotas(struct Aluno aluno[], int total) {
     int indice;
+    float soma, novaSoma;
+    char situacaoAnterior[10];
 
     printf("\n> Digite o índice do aluno que terá suas notas atualizadas: ");
     scanf("%d", &indice);
 
-    // TODO
-}
+    if (indice >= 0 && indice < total) {
+        // Copia a situação atual do aluno numa nova variável para futura comparação
+        strcpy(situacaoAnterior, aluno[indice].situacao);
+        
+        // Lê novamente a nota da A1 (aceitando apenas entre 0 a 5)
+        do {
+            printf("  > Digite a nova nota da A1 (0-5): ");
+            scanf("%f", &aluno[indice].a1);
+        } while (aluno[indice].a1 < 0 || aluno[indice].a1 > 5);
 
-// Opção 7 do menu
-void deletarNotas(struct Aluno aluno[], int total) {
-    int indice;
+        // Lê novamente a nota da A2 (aceitando apenas entre 0 a 5)
+        do {
+            printf("  > Digite a nova nota da A2 (0-5): ");
+            scanf("%f", &aluno[indice].a2);
+        } while (aluno[indice].a2 < 0 || aluno[indice].a2 > 5);
 
-    printf("\n> Digite o índice do aluno que terá suas notas deletadas: ");
-    scanf("%d", &indice);
+        // Calcula novamente a média
+        soma = aluno[indice].a1 + aluno[indice].a2;
 
-    // TODO
+        // Se a média for 6 ou mais, é aprovado
+        if (soma >= 6) {
+            aluno[indice].media = soma;
+            strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
+        } else {
+            // Senão, pede a AF
+            printf("\n(*) %s foi reprovado com nova média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
+
+            // Lê novamente a nota da AF (aceitando apenas entre 0 a 5)
+            do {
+                printf("    > Digite a nota da AF (0-5): ");
+                scanf("%f", &aluno[indice].af);
+            } while (aluno[indice].af < 0 || aluno[indice].af > 5);
+
+            // Substitui novamente a menor nota entre A1 e A2 pela AF
+            if (aluno[indice].a1 < aluno[indice].a2) {
+                aluno[indice].a1 = aluno[indice].af;
+            } else {
+                aluno[indice].a2 = aluno[indice].af;
+            }
+
+            // Recalcula a nova média
+            novaSoma = aluno[indice].a1 + aluno[indice].a2;
+            aluno[indice].media = novaSoma;
+
+            // Atualiza a situação do aluno
+            if (novaSoma >= 6) {
+                strcpy(aluno[indice].situacao, "Aprovado");
+            } else {
+                strcpy(aluno[indice].situacao, "Reprovado");
+            }
+        }
+
+        // Verifica se a situação mudou
+        if (strcmp(situacaoAnterior, aluno[indice].situacao) != 0) {
+            printf("\n(*) %s obteve uma nova média %.2f e sua situação foi alterada para \"%s\".\n\n", aluno[indice].nome, soma, aluno[indice].situacao);
+        } else {
+            printf("\n(*) %s obteve uma nova média %.2f e sua situação permanece a mesma.\n\n", aluno[indice].nome, soma);
+        }
+    } else {
+        printf("  (!) Índice inválido ou não existente.\n\n");
+    }
 }
 
 int main() {
@@ -265,10 +316,7 @@ int main() {
                 atribuirNotas(aluno, totalAlunos);
                 break;
             case 6:
-                printf("Em andamento...\n\n");
-                break;
-            case 7:
-                printf("Em andamento...\n\n");
+                atualizarNotas(aluno, totalAlunos);
                 break;
             case 0:
                 // Opção 0 do menu
