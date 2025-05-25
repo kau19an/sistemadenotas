@@ -12,6 +12,15 @@ struct Aluno {
 };
 
 // Funções do programa
+// "Limpa" a tela pulando 50 linhas
+void limparTela() {
+    printf("\nPressione Enter para continuar...");
+    getchar(); // "Gasta" o Enter dado nas opções
+    getchar(); // Espera o Enter para continuar de fato
+    for (int i = 0; i < 50; i++) printf("\n");
+}
+
+// Menu
 int abrirMenu() {
     int escolha;
 
@@ -74,7 +83,7 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
     } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
     
     printf("\nVocê cadastrou:");
-    printf("\n- %s (RGM: %d)\n\n", aluno[*total].nome, aluno[*total].RGM);
+    printf("\n- %s (RGM: %d)\n", aluno[*total].nome, aluno[*total].RGM);
     (*total)++;
 }
 
@@ -82,14 +91,14 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
 void listarAlunos(struct Aluno aluno[], int total) {    
     // Caso o usuário deseja ver a lista mas não há nenhum aluno cadastrado
     if (total == 0) {
-        printf("\n(!) Nenhum aluno foi cadastrado até o momento.\n\n");
+        printf("\n(!) Nenhum aluno foi cadastrado até o momento.\n");
         return; // Para não continuar com as linhas abaixo
     }
 
     printf("\nLista de alunos cadastrados:\n");
     for (int i = 0; i < total; i++) {
         printf("(%d) Aluno: %s (RGM: %d)\n", i, aluno[i].nome, aluno[i].RGM);
-        printf("    Situação: %s com média %.2f.\n\n", aluno[i].situacao, aluno[i].media);
+        printf("    Situação: %s com média %.2f.\n", aluno[i].situacao, aluno[i].media);
     }
 }
 
@@ -121,7 +130,7 @@ void atualizarAluno(struct Aluno aluno[], int total) {
             }
 
             if (!valido) {
-                printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n\n");
+                printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n");
             } else { // Se não possuir, prossegue
                 // Joga o nome para maiúsculo (letra por letra)
                 for (int i = 0; aluno[indice].nome[i] != '\0'; i++) {
@@ -141,9 +150,9 @@ void atualizarAluno(struct Aluno aluno[], int total) {
         }
     } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
 
-        printf("  (*) Aluno atualizado com sucesso!\n\n");
+        printf("  (*) Aluno atualizado com sucesso!\n");
     } else {
-        printf("  (!) Índice inválido ou não existente.\n\n");
+        printf("  (!) Índice inválido ou não existente.\n");
     }
 }
 
@@ -161,9 +170,9 @@ void deletarAluno(struct Aluno aluno[], int *total) {
 
         (*total)--;
 
-        printf("  (*) Aluno deletado com sucesso!\n\n");
+        printf("  (*) Aluno deletado com sucesso!\n");
     } else {
-        printf("  (!) Índice inválido ou não existente.\n\n");
+        printf("  (!) Índice inválido ou não existente.\n");
     }
 }
 
@@ -203,7 +212,7 @@ void atribuirNotas(struct Aluno aluno[], int total) {
 
         // Se a média for 6 ou mais, é aprovado
         if (soma >= 6) {
-            printf("\n(*) %s foi aprovado com média %.2f.\n\n", aluno[indice].nome, soma);
+            printf("\n(*) %s foi aprovado com média %.2f.\n", aluno[indice].nome, soma);
             aluno[indice].media = soma;
             strcpy(aluno[indice].situacao, "Aprovado");
         } else {
@@ -234,20 +243,20 @@ void atribuirNotas(struct Aluno aluno[], int total) {
 
                 // Se a média for 6 ou mais, é aprovado
                 if (novaSoma >= 6) {
-                    printf("\n(*) %s foi aprovado na AF com média %.2f.\n\n", aluno[indice].nome, novaSoma);
+                    printf("\n(*) %s foi aprovado na AF com média %.2f.\n", aluno[indice].nome, novaSoma);
                     strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
                 } else { // Senão, é reprovado
-                    printf("\n(*) %s foi reprovado com média %.2f mesmo após a AF.\n\n", aluno[indice].nome, novaSoma);
+                    printf("\n(*) %s foi reprovado com média %.2f mesmo após a AF.\n", aluno[indice].nome, novaSoma);
                     strcpy(aluno[indice].situacao, "Reprovado"); // Atribui "Reprovado" à situação do aluno
                 }
             } else {
                 aluno[indice].media = soma;
                 strcpy(aluno[indice].situacao, "Reprovado");
-                printf("\n(!) A AF é menor que a A1 e A2 e o aluno permanece reprovado com média %.2f.\n\n", soma);
+                printf("\n(!) A AF é menor que a A1 e A2 e o aluno permanece reprovado com média %.2f.\n", soma);
             }
         }
     } else {
-        printf("  (!) Índice inválido ou não existente.\n\n");
+        printf("  (!) Índice inválido ou não existente.\n");
     }
 }
 
@@ -333,12 +342,12 @@ void atualizarNotas(struct Aluno aluno[], int total) {
 
         // Verifica se a situação mudou
         if (strcmp(situacaoAnterior, aluno[indice].situacao) != 0) {
-            printf("\n(*) %s obteve a média %.2f e sua situação foi alterada para \"%s\".\n\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
+            printf("\n(*) %s obteve a média %.2f e sua situação foi alterada para \"%s\".\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         } else {
-            printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
+            printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         }
     } else {
-        printf("  (!) Índice inválido ou não existente.\n\n");
+        printf("  (!) Índice inválido ou não existente.\n");
     }
 }
 
@@ -353,30 +362,41 @@ int main() {
     do {
         // Sempre que a opção escolhida for concluída, o menu é reaberto novamente
         escolha = abrirMenu();
-
+        
         switch (escolha) {
             case 1:
                 cadastrarAluno(aluno, &totalAlunos);
+                limparTela();
                 break;
             case 2:
                 listarAlunos(aluno, totalAlunos);
+                limparTela();
                 break;
             case 3:
                 atualizarAluno(aluno, totalAlunos);
+                limparTela();
                 break;
             case 4:
                 deletarAluno(aluno, &totalAlunos);
+                limparTela();
                 break;
             case 5:
                 atribuirNotas(aluno, totalAlunos);
+                limparTela();
                 break;
             case 6:
                 atualizarNotas(aluno, totalAlunos);
+                limparTela();
                 break;
             case 0:
                 // Opção 0 do menu
                 printf("\nSaindo...");
                 exit(0);
+            default:
+                // Caso o usuário digite outro número que não esteja entre 0-6
+                printf("  (!) Digite uma opção válida.\n");
+                limparTela();
+                break;
         }
     } while (escolha != 0);
 
