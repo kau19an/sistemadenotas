@@ -98,7 +98,13 @@ void listarAlunos(struct Aluno aluno[], int total) {
     printf("\nLista de alunos cadastrados:\n");
     for (int i = 0; i < total; i++) {
         printf("(%d) Aluno: %s (RGM: %d)\n", i, aluno[i].nome, aluno[i].RGM);
-        printf("    Situação: %s com média %.2f.\n", aluno[i].situacao, aluno[i].media);
+        
+        // Caso o aluno não possua notas atribuídas ainda
+        if (strlen(aluno[i].situacao) <= 1) {
+            printf("    Situação: Atribua notas para que a média seja exibida.\n");
+        } else { // Exibe a situação e a média caso já possua
+            printf("    Situação: %s com média %.2f.\n", aluno[i].situacao, aluno[i].media);
+        }
     }
 }
 
