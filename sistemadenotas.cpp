@@ -160,7 +160,14 @@ void atualizarAluno(struct Aluno aluno[], int total) {
         }
     } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
 
-        printf("  (*) Aluno atualizado com sucesso!\n");
+    printf("  (*) Aluno atualizado com sucesso!\n");
+
+    // Reseta todas as notas e a situação do aluno anterior após atualizar
+    if (aluno[indice].media > 0 || strlen(aluno[indice].situacao) > 0) {
+        aluno[indice].a1 = aluno[indice].a2 = aluno[indice].af = aluno[indice].media = 0;
+        strcpy(aluno[indice].situacao, "");
+        printf("  (!) As notas do aluno anterior foram deletadas, atribua-as novamente.\n");
+    }
     } else {
         printf("  (!) Índice inválido ou não existente.\n");
     }
