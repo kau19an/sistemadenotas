@@ -179,8 +179,8 @@ void atribuirNotas(struct Aluno aluno[], int total) {
         if (soma >= 6) {
             printf("\n(*) %s foi aprovado com média %.2f.\n\n", aluno[indice].nome, soma);
             aluno[indice].media = soma;
-            strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
-        } else { // Senão, pede a AF
+            strcpy(aluno[indice].situacao, "Aprovado");
+        } else {
             printf("\n(*) %s foi reprovado com média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
 
             // Lê a nota da AF (aceitando apenas entre 0 a 5)
@@ -189,25 +189,30 @@ void atribuirNotas(struct Aluno aluno[], int total) {
                 scanf("%f", &aluno[indice].af);
             } while (aluno[indice].af < 0 || aluno[indice].af > 5);
 
-            // Substitui a menor nota entre A1 e A2 pela AF
-            if (aluno[indice].a1 < aluno[indice].a2) {
-                aluno[indice].a1 = aluno[indice].af;
+            // Verifica se a AF pode ajudar na nota da A1 e A2 e só as substituem se ela for maior
+            if (aluno[indice].af > aluno[indice].a1 || aluno[indice].af > aluno[indice].a2) {
+                if (aluno[indice].a1 < aluno[indice].a2) {
+                    aluno[indice].a1 = aluno[indice].af;
+                } else {
+                    aluno[indice].a2 = aluno[indice].af;
+                }
+
+                // Calcula a nova média
+                novaSoma = aluno[indice].a1 + aluno[indice].a2;
+                aluno[indice].media = novaSoma;
+
+                // Se a média for 6 ou mais, é aprovado
+                if (novaSoma >= 6) {
+                    printf("\n(*) %s foi aprovado na AF com média %.2f.\n\n", aluno[indice].nome, novaSoma);
+                    strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
+                } else { // Senão, é reprovado
+                    printf("\n(*) %s foi reprovado com média %.2f mesmo após a AF.\n\n", aluno[indice].nome, novaSoma);
+                    strcpy(aluno[indice].situacao, "Reprovado"); // Atribui "Reprovado" à situação do aluno
+                }
             } else {
-                aluno[indice].a2 = aluno[indice].af;
-            }
-
-            // Calcula a nova média
-            novaSoma = aluno[indice].a1 + aluno[indice].a2;
-
-            // Se a média for 6 ou mais, é aprovado
-            if (novaSoma >= 6) {
-                printf("\n(*) %s foi aprovado na AF com média %.2f.\n\n", aluno[indice].nome, novaSoma);
-                aluno[indice].media = novaSoma;
-                strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
-            } else { // Senão, é reprovado
-                printf("\n(*) %s foi reprovado com média %.2f mesmo após a AF.\n\n", aluno[indice].nome, novaSoma);
-                aluno[indice].media = novaSoma;
-                strcpy(aluno[indice].situacao, "Reprovado"); // Atribui "Reprovado" à situação do aluno
+                aluno[indice].media = soma;
+                strcpy(aluno[indice].situacao, "Reprovado");
+                printf("\n(!) A AF é menor que a A1 e A2 e o aluno permanece reprovado com média %.2f.\n\n", soma);
             }
         }
     } else {
@@ -227,7 +232,7 @@ void atualizarNotas(struct Aluno aluno[], int total) {
     if (indice >= 0 && indice < total) {
         // Copia a situação atual do aluno numa nova variável para futura comparação
         strcpy(situacaoAnterior, aluno[indice].situacao);
-        
+
         // Lê novamente a nota da A1 (aceitando apenas entre 0 a 5)
         do {
             printf("  > Digite a nova nota da A1 (0-5): ");
@@ -247,40 +252,44 @@ void atualizarNotas(struct Aluno aluno[], int total) {
         if (soma >= 6) {
             aluno[indice].media = soma;
             strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
-        } else {
-            // Senão, pede a AF
+        } else { // Senão, pede a AF
             printf("\n(*) %s foi reprovado com nova média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
 
             // Lê novamente a nota da AF (aceitando apenas entre 0 a 5)
             do {
-                printf("    > Digite a nota da AF (0-5): ");
+                printf("    > Digite a nova nota da AF (0-5): ");
                 scanf("%f", &aluno[indice].af);
             } while (aluno[indice].af < 0 || aluno[indice].af > 5);
 
-            // Substitui novamente a menor nota entre A1 e A2 pela AF
-            if (aluno[indice].a1 < aluno[indice].a2) {
-                aluno[indice].a1 = aluno[indice].af;
-            } else {
-                aluno[indice].a2 = aluno[indice].af;
-            }
+            // Verifica se a AF pode ajudar na nota da A1 e A2 e só as substituem se ela for maior
+            if (aluno[indice].af > aluno[indice].a1 || aluno[indice].af > aluno[indice].a2) {
+                if (aluno[indice].a1 < aluno[indice].a2) {
+                    aluno[indice].a1 = aluno[indice].af;
+                } else {
+                    aluno[indice].a2 = aluno[indice].af;
+                }
 
-            // Recalcula a nova média
-            novaSoma = aluno[indice].a1 + aluno[indice].a2;
-            aluno[indice].media = novaSoma;
+                // Recalcula a nova média
+                novaSoma = aluno[indice].a1 + aluno[indice].a2;
+                aluno[indice].media = novaSoma;
 
-            // Atualiza a situação do aluno
-            if (novaSoma >= 6) {
-                strcpy(aluno[indice].situacao, "Aprovado");
+                // Atualiza a situação do aluno
+                if (novaSoma >= 6) {
+                    strcpy(aluno[indice].situacao, "Aprovado");
+                } else {
+                    strcpy(aluno[indice].situacao, "Reprovado");
+                }
             } else {
+                aluno[indice].media = soma;
                 strcpy(aluno[indice].situacao, "Reprovado");
             }
         }
 
         // Verifica se a situação mudou
         if (strcmp(situacaoAnterior, aluno[indice].situacao) != 0) {
-            printf("\n(*) %s obteve uma nova média %.2f e sua situação foi alterada para \"%s\".\n\n", aluno[indice].nome, soma, aluno[indice].situacao);
+            printf("\n(*) %s obteve a média %.2f e sua situação foi alterada para \"%s\".\n\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         } else {
-            printf("\n(*) %s obteve uma nova média %.2f e sua situação permanece a mesma.\n\n", aluno[indice].nome, soma);
+            printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n\n", aluno[indice].nome, soma, aluno[indice].situacao);
         }
     } else {
         printf("  (!) Índice inválido ou não existente.\n\n");
