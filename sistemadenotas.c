@@ -8,7 +8,7 @@ struct Aluno {
 	char nome[50];
 	int RGM;
 	float a1, a2, af, media;
-    char situacao[10]; // Para "Aprovado" ou "Reprovado"
+	char situacao[10]; // Para "Aprovado" ou "Reprovado"
 };
 
 // Funções do programa
