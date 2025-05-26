@@ -149,24 +149,24 @@ void atualizarAluno(struct Aluno aluno[], int total) {
 
         } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
 
-    do {
-        printf("> Digite o novo RGM (até 8 dígitos): ");
-        scanf("%d", &aluno[indice].RGM);
+        do {
+            printf("> Digite o novo RGM (até 8 dígitos): ");
+            scanf("%d", &aluno[indice].RGM);
 
-        // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-        if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
-            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+            // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
+            if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
+                printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+            }
+        } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
+
+        printf("  (*) Aluno atualizado com sucesso!\n");
+
+        // Reseta todas as notas e a situação do aluno anterior após atualizar
+        if (aluno[indice].media > 0 || strlen(aluno[indice].situacao) > 0) {
+            aluno[indice].a1 = aluno[indice].a2 = aluno[indice].af = aluno[indice].media = 0;
+            strcpy(aluno[indice].situacao, "");
+            printf("  (!) As notas do aluno anterior foram deletadas, atribua-as novamente.\n");
         }
-    } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
-
-    printf("  (*) Aluno atualizado com sucesso!\n");
-
-    // Reseta todas as notas e a situação do aluno anterior após atualizar
-    if (aluno[indice].media > 0 || strlen(aluno[indice].situacao) > 0) {
-        aluno[indice].a1 = aluno[indice].a2 = aluno[indice].af = aluno[indice].media = 0;
-        strcpy(aluno[indice].situacao, "");
-        printf("  (!) As notas do aluno anterior foram deletadas, atribua-as novamente.\n");
-    }
     } else {
         printf("  (!) Índice inválido ou não existente.\n");
     }
@@ -179,6 +179,7 @@ void deletarAluno(struct Aluno aluno[], int *total) {
     printf("\n> Digite o índice do aluno a ser deletado: ");
     scanf("%d", &indice);
 
+    // Deleta e passa o índice dos alunos anteriores uma casa para trás
     if (indice >= 0 && indice < *total) {
         for (int i = indice; i < *total - 1; i++) {
             aluno[i] = aluno[i + 1];
@@ -271,7 +272,7 @@ void atribuirNotas(struct Aluno aluno[], int total) {
                     printf("\n(*) %s foi reprovado com média %.2f mesmo após a AF.\n", aluno[indice].nome, novaSoma);
                     strcpy(aluno[indice].situacao, "Reprovado"); // Atribui "Reprovado" à situação do aluno
                 }
-            } else {
+            } else { // A mesma mensagem de reprovado acima mas para caso a AF não ajude
                 aluno[indice].media = soma;
                 strcpy(aluno[indice].situacao, "Reprovado");
                 printf("\n(!) A AF é menor que a A1 e A2 e o aluno permanece reprovado com média %.2f.\n", soma);
@@ -331,7 +332,7 @@ void corrigirNotas(struct Aluno aluno[], int total) {
             aluno[indice].media = soma;
             strcpy(aluno[indice].situacao, "Aprovado"); // Atribui "Aprovado" à situação do aluno
         } else { // Senão, pede a AF
-            printf("\n(*) %s foi reprovado com nova média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
+            printf("\n(*) %s foi reprovado com média %.2f e deverá fazer AF.\n", aluno[indice].nome, soma);
 
             // Lê novamente a nota da AF (aceitando apenas entre 0 a 5)
             do {
@@ -362,7 +363,7 @@ void corrigirNotas(struct Aluno aluno[], int total) {
                 } else {
                     strcpy(aluno[indice].situacao, "Reprovado");
                 }
-            } else {
+            } else { // A mesma atribuição de reprovado acima mas para caso a AF não ajude
                 aluno[indice].media = soma;
                 strcpy(aluno[indice].situacao, "Reprovado");
             }
@@ -371,7 +372,7 @@ void corrigirNotas(struct Aluno aluno[], int total) {
         // Verifica se a situação mudou
         if (strcmp(situacaoAnterior, aluno[indice].situacao) != 0) {
             printf("\n(*) %s obteve a média %.2f e sua situação foi alterada para \"%s\".\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
-        } else {
+        } else { // Caso a situação continue igual mesmo após a correção
             printf("\n(*) %s obteve a média %.2f e sua situação permanece \"%s\".\n", aluno[indice].nome, aluno[indice].media, aluno[indice].situacao);
         }
     } else {
@@ -383,8 +384,8 @@ int main() {
     // Permite as acentuações em português
     setlocale(LC_ALL, "Portuguese");
 
-    struct Aluno aluno[100];
-    int totalAlunos = 0;
+    struct Aluno aluno[100]; // Permite o cadastro de até 100 alunos
+    int totalAlunos = 0;    // Inicia a contagem de alunos em 0
     int escolha;
 
     do {
@@ -395,7 +396,7 @@ int main() {
             case 1:
                 cadastrarAluno(aluno, &totalAlunos);
                 limparTela();
-                break;
+                break; // Para voltar ao menu
             case 2:
                 listarAlunos(aluno, totalAlunos);
                 limparTela();
