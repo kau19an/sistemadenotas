@@ -4,6 +4,8 @@
 #include <stdlib.h> // Para 'exit()'
 #include <string.h> // Para 'strcpy()', 'strcmp()' e 'strlen()'
 
+#define max_alunos 100 // Define a quantidade máxima de alunos que podem ser cadastrados (padrão: 100)
+
 struct Aluno {
 	char nome[50];
 	int RGM;
@@ -40,7 +42,11 @@ int abrirMenu() {
 
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
-    aluno[*total];
+    if (*total >= max_alunos) {
+        printf("\n(!) Limite máximo de alunos atingido. Não é possível cadastrar mais.\n");
+        return;
+    }
+
     int valido = 1;
     
     do {
@@ -384,8 +390,8 @@ int main() {
     // Permite as acentuações em português
     setlocale(LC_ALL, "Portuguese");
 
-    struct Aluno aluno[100]; // Permite o cadastro de até 100 alunos
-    int totalAlunos = 0;    // Inicia a contagem de alunos em 0
+    struct Aluno aluno[max_alunos];
+    int totalAlunos = 0; // Inicia a contagem de alunos em 0
     int escolha;
 
     do {
