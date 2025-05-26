@@ -41,7 +41,6 @@ int abrirMenu() {
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
     aluno[*total];
-    int indice;
     int valido = 1;
     
     do {
@@ -74,13 +73,13 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
 
     do {
         printf("> Digite o RGM (até 8 dígitos): ");
-        scanf("%d", &aluno[indice].RGM);
+        scanf("%d", &aluno[*total].RGM);
 
         // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-        if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
+        if (aluno[*total].RGM < 10000000 || aluno[*total].RGM > 99999999) {
             printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
         }
-    } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
+    } while (aluno[*total].RGM < 10000000 || aluno[*total].RGM > 99999999);
 
     // Garante que a média e a situação do aluno iniciem zeradas
     aluno[*total].media = 0;
