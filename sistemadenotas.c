@@ -1,7 +1,7 @@
 #include <ctype.h>  // Para 'toupper()'
 #include <locale.h> // Para 'setlocale()'
 #include <stdio.h>  // Para a entrada e saída e dados
-#include <stdlib.h> // Para 'exit()'
+#include <stdlib.h> // Para 'exit()', 'system()' e 'atoi()'
 #include <string.h> // Para 'strcpy()', 'strcmp()' e 'strlen()'
 
 #define max_alunos 100 // Define a quantidade máxima de alunos que podem ser cadastrados (padrão: 100)
@@ -14,12 +14,10 @@ struct Aluno {
 };
 
 // Funções do programa
-// "Limpa" a tela pulando 50 linhas
+// Limpar a tela
 void limparTela() {
-    printf("\nPressione Enter para continuar...");
-    getchar(); // "Gasta" o Enter dado nas opções
-    getchar(); // Espera o Enter para continuar de fato
-    for (int i = 0; i < 50; i++) printf("\n");
+    system("pause");
+	system("cls");
 }
 
 // Menu
@@ -43,7 +41,7 @@ int abrirMenu() {
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
     int valido, RGMTemp;
-    char nomeTemp[50];
+    char nomeTemp[50], RGMTempString[9];
 
     if (*total >= max_alunos) {
         printf("\n(!) Limite máximo de alunos atingido. Não é possível cadastrar mais.\n");
@@ -82,7 +80,7 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
             // Verifica se o nome já está cadastrado para evitar duplicidade
             for (int i = 0; i < *total; i++) {
                 if (strcmp(aluno[i].nome, nomeTemp) == 0) {
-                    printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro nome.\n");
+                    printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro.\n");
                     valido = 0;
                     break;
                 }
@@ -91,27 +89,40 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
     } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
 
     // Lê e valida o RGM
-    do {
-        valido = 1;
-
-        printf("> Digite o RGM (até 8 dígitos): ");
-        scanf("%d", &RGMTemp);
-
-        // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-        if (RGMTemp < 10000000 || RGMTemp > 99999999) {
-            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
-            valido = 0;
-        } else {
-            for (int i = 0; i < *total; i++) {
-                // Verifica se o RGM já está cadastrado para evitar duplicidade
-                if (aluno[i].RGM == RGMTemp) {
-                    printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro RGM.\n\n");
-                    valido = 0;
-                    break;
-                }
-            }
-        }
-    } while (!valido);
+	do {
+	    valido = 1;
+	
+	    printf("> Digite o RGM (até 8 dígitos): ");
+	    scanf("%s", RGMTempString); // Para armazenar o RGM primeiro como string e permitir as verificações
+	
+	    // Verifica se todos os caracteres são dígitos
+	    for (int i = 0; RGMTempString[i] != '\0'; i++) {
+	        if (!isdigit(RGMTempString[i])) {
+	            printf("  (!) Por favor, informe apenas números. Letras ou símbolos não são permitidos.\n\n");
+	            valido = 0;
+	            break;
+	        }
+	    }
+	
+	    // Se todos forem números, verifica se tem exatamente 8 dígitos
+	    if (valido) {
+	        if (strlen(RGMTempString) != 8) {
+	            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+	            valido = 0;
+	        } else { // Se sim, converte o RGM (string) para RGM (inteiro)
+	            RGMTemp = atoi(RGMTempString);
+	
+	            for (int i = 0; i < *total; i++) {
+	            	// Verifica se o RGM já está cadastrado para evitar duplicidade
+	                if (aluno[i].RGM == RGMTemp) {
+	                    printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro.\n\n");
+	                    valido = 0;
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	} while (!valido);
 
     // Armazena os dados já validados e garante que a média e a situação do aluno iniciem zeradas
     strcpy(aluno[*total].nome, nomeTemp);
@@ -184,7 +195,7 @@ void atualizarAluno(struct Aluno aluno[], int total) {
                 for (int i = 0; i < total; i++) {
                     // Verifica se o nome já está cadastrado para evitar duplicidade
                     if (i != indice && strcmp(aluno[i].nome, nomeTemp) == 0) {
-                        printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro nome.\n");
+                        printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro.\n");
                         valido = 0;
                         break;
                     }
@@ -193,26 +204,41 @@ void atualizarAluno(struct Aluno aluno[], int total) {
         } while (!valido);
 
         // Lê e valida o RGM
-        do {
-            valido = 1;
-            printf("> Digite o novo RGM (até 8 dígitos): ");
-            scanf("%d", &RGMTemp);
-
-            // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-            if (RGMTemp < 10000000 || RGMTemp > 99999999) {
-                printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
-                valido = 0;
-            } else { // Se for válido
-                for (int i = 0; i < total; i++) {
-                    // Verifica se o RGM já está cadastrado para evitar duplicidade
-                    if (i != indice && aluno[i].RGM == RGMTemp) {
-                        printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro RGM.\n\n");
-                        valido = 0;
-                        break;
-                    }
-                }
-            }
-        } while (!valido);
+		do {
+		    valido = 1;
+		    char RGMTempString[9]; // Para armazenar o RGM primeiro como string e permitir as verificações
+		
+		    printf("> Digite o novo RGM (até 8 dígitos): ");
+		    scanf("%s", RGMTempString);
+		
+		    // Verifica se todos os caracteres são dígitos
+		    for (int i = 0; RGMTempString[i] != '\0'; i++) {
+		        if (!isdigit(RGMTempString[i])) {
+		            printf("  (!) Por favor, informe apenas números. Letras ou símbolos não são permitidos.\n\n");
+		            valido = 0;
+		            break;
+		        }
+		    }
+		
+		    // Se todos forem números, verifica se tem exatamente 8 dígitos
+		    if (valido) {
+		        if (strlen(RGMTempString) != 8) {
+		            printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+		            valido = 0;
+		        } else { // Se sim, converte o RGM (string) para RGM (inteiro)
+		            RGMTemp = atoi(RGMTempString);
+		
+		            for (int i = 0; i < total; i++) {
+		                // Verifica se o RGM já está cadastrado para evitar duplicidade
+		                if (i != indice && aluno[i].RGM == RGMTemp) {
+		                    printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro.\n\n");
+		                    valido = 0;
+		                    break;
+		                }
+		            }
+		        }
+		    }
+		} while (!valido);
 
         // Armazena os dados já validados
         strcpy(aluno[indice].nome, nomeTemp);
