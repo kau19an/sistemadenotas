@@ -42,20 +42,24 @@ int abrirMenu() {
 
 // Opção 1 do menu
 void cadastrarAluno(struct Aluno aluno[], int *total) {
+    int valido, RGMTemp;
+    char nomeTemp[50];
+
     if (*total >= max_alunos) {
         printf("\n(!) Limite máximo de alunos atingido. Não é possível cadastrar mais.\n");
-        return;
+        return; // Para não continuar com as linhas abaixo
     }
 
-    int valido = 1;
-    
+    // Lê e valida o nome
     do {
+        valido = 1;
+
         printf("\n> Digite o nome completo do aluno (sem espaços): ");
-        scanf("%s", aluno[*total].nome);
+        scanf("%s", nomeTemp);
         
         // Passa por cada letra do nome e verifica se são caracteres A-Z/a-z
-        for (int i = 0; aluno[*total].nome[i] != '\0'; i++) {
-            char c = aluno[*total].nome[i];
+        for (int i = 0; nomeTemp[i] != '\0'; i++) {
+            char c = nomeTemp[i];
             // Se forem, continua
             if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
                 valido = 1;
@@ -63,7 +67,7 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
             } else {
                 // Se possuir algum outro caractere além de A-Z/a-z, é considerado inválido (0)
                 valido = 0;
-                break;
+                break; 
             }
         }
 
@@ -71,23 +75,47 @@ void cadastrarAluno(struct Aluno aluno[], int *total) {
             printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n");
         } else { // Se não possuir, prossegue
             // Joga o nome para maiúsculo (letra por letra)
-            for (int i = 0; aluno[*total].nome[i] != '\0'; i++) {
-                aluno[*total].nome[i] = toupper(aluno[*total].nome[i]);
+            for (int i = 0; nomeTemp[i] != '\0'; i++) {
+                nomeTemp[i] = toupper(nomeTemp[i]);
+            }
+
+            // Verifica se o nome já está cadastrado para evitar duplicidade
+            for (int i = 0; i < *total; i++) {
+                if (strcmp(aluno[i].nome, nomeTemp) == 0) {
+                    printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro nome.\n");
+                    valido = 0;
+                    break;
+                }
             }
         }
     } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
 
+    // Lê e valida o RGM
     do {
+        valido = 1;
+
         printf("> Digite o RGM (até 8 dígitos): ");
-        scanf("%d", &aluno[*total].RGM);
+        scanf("%d", &RGMTemp);
 
         // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-        if (aluno[*total].RGM < 10000000 || aluno[*total].RGM > 99999999) {
+        if (RGMTemp < 10000000 || RGMTemp > 99999999) {
             printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+            valido = 0;
+        } else {
+            for (int i = 0; i < *total; i++) {
+                // Verifica se o RGM já está cadastrado para evitar duplicidade
+                if (aluno[i].RGM == RGMTemp) {
+                    printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro RGM.\n\n");
+                    valido = 0;
+                    break;
+                }
+            }
         }
-    } while (aluno[*total].RGM < 10000000 || aluno[*total].RGM > 99999999);
+    } while (!valido);
 
-    // Garante que a média e a situação do aluno iniciem zeradas
+    // Armazena os dados já validados e garante que a média e a situação do aluno iniciem zeradas
+    strcpy(aluno[*total].nome, nomeTemp);
+    aluno[*total].RGM = RGMTemp;
     aluno[*total].media = 0;
     strcpy(aluno[*total].situacao, "");
 
@@ -125,20 +153,21 @@ void atualizarAluno(struct Aluno aluno[], int total) {
     scanf("%d", &indice);
 
     if (indice >= 0 && indice < total) {
-        int valido = 1;
+        int valido;
+        char nomeTemp[50];
+        int RGMTemp;
+
+        // Lê e valida o nome
         do {
+            valido = 1;
             printf("\n> Digite o novo nome completo (sem espaços): ");
-            scanf("%s", aluno[indice].nome);
+            scanf("%s", nomeTemp);
 
             // Passa por cada letra do nome e verifica se são caracteres A-Z/a-z
-            for (int i = 0; aluno[indice].nome[i] != '\0'; i++) {
-                char c = aluno[indice].nome[i];
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-                    // Se forem, continua
-                    valido = 1;
-                    continue;
-                } else {
-                    // Se possuir algum outro caractere além de A-Z/a-z, é considerado inválido (0)
+            for (int i = 0; nomeTemp[i] != '\0'; i++) {
+                char c = nomeTemp[i];
+                if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+                    // Se não forem, é considerado inválido (0)
                     valido = 0;
                     break;
                 }
@@ -146,24 +175,48 @@ void atualizarAluno(struct Aluno aluno[], int total) {
 
             if (!valido) {
                 printf("  (!) Por favor, informe apenas caracteres A-Z. Símbolos não são permitidos.\n");
-            } else { // Se não possuir, prossegue
+            } else { // Se forem, prossegue
                 // Joga o nome para maiúsculo (letra por letra)
-                for (int i = 0; aluno[indice].nome[i] != '\0'; i++) {
-                    aluno[indice].nome[i] = toupper(aluno[indice].nome[i]);
+                for (int i = 0; nomeTemp[i] != '\0'; i++) {
+                    nomeTemp[i] = toupper(nomeTemp[i]);
+                }
+
+                for (int i = 0; i < total; i++) {
+                    // Verifica se o nome já está cadastrado para evitar duplicidade
+                    if (i != indice && strcmp(aluno[i].nome, nomeTemp) == 0) {
+                        printf("  (!) Já existe um aluno com esse nome cadastrado. Escolha outro nome.\n");
+                        valido = 0;
+                        break;
+                    }
                 }
             }
+        } while (!valido);
 
-        } while (!valido); // Pede o nome do aluno até todos os caracteres serem A-Z/a-z, ou seja, válido (1)
-
+        // Lê e valida o RGM
         do {
+            valido = 1;
             printf("> Digite o novo RGM (até 8 dígitos): ");
-            scanf("%d", &aluno[indice].RGM);
+            scanf("%d", &RGMTemp);
 
             // Se certifica que o RGM tem 8 dígitos limitando-o entre o menor e maior número com 8 dígitos
-            if (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999) {
+            if (RGMTemp < 10000000 || RGMTemp > 99999999) {
                 printf("  (!) RGM inválido. Ele deve possuir 8 dígitos.\n\n");
+                valido = 0;
+            } else { // Se for válido
+                for (int i = 0; i < total; i++) {
+                    // Verifica se o RGM já está cadastrado para evitar duplicidade
+                    if (i != indice && aluno[i].RGM == RGMTemp) {
+                        printf("  (!) Já existe um aluno com esse RGM cadastrado. Escolha outro RGM.\n\n");
+                        valido = 0;
+                        break;
+                    }
+                }
             }
-        } while (aluno[indice].RGM < 10000000 || aluno[indice].RGM > 99999999);
+        } while (!valido);
+
+        // Armazena os dados já validados
+        strcpy(aluno[indice].nome, nomeTemp);
+        aluno[indice].RGM = RGMTemp;
 
         printf("  (*) Aluno atualizado com sucesso!\n");
 
