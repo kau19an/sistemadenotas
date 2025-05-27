@@ -16,7 +16,7 @@ struct Aluno {
 // Funções do programa
 // Limpar a tela
 void limparTela() {
-    system("pause");
+	system("pause");
 	system("cls");
 }
 
